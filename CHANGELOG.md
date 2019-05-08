@@ -1,3 +1,9 @@
+## [0.2.0]
+* Add fading effect
+* Rename to loading_overlay
+* Remove optional offset
+* Rename isInAsyncCall to isLoading
+
 ## [0.1.3]
 * Performance optimization
 * Improved docs

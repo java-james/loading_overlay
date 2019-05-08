@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:modal_progress_hud/loading_overlay.dart';
 
 void main() => runApp(MyApp());
 
@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
 
   // manage state of modal progress HUD widget
-  bool _isInAsyncCall = false;
+  bool _isLoading = false;
 
   bool _isInvalidAsyncUser = false; // managed after response from server
   bool _isInvalidAsyncPass = false; // managed after response from server
@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
 
       // start the modal progress HUD
       setState(() {
-        _isInAsyncCall = true;
+        _isLoading = true;
       });
 
       // Simulate a service call
@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
             _isInvalidAsyncPass = false;
           }
           // stop the modal progress HUD
-          _isInAsyncCall = false;
+          _isLoading = false;
         });
         if (_isLoggedIn)
           // do something
@@ -125,14 +125,14 @@ class _LoginPageState extends State<LoginPage> {
       ),
       // display modal progress HUD (heads-up display, or indicator)
       // when in async call
-      body: ModalProgressHUD(
+      body: LoadingOverlay(
         child: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.all(16.0),
             child: buildLoginForm(context),
           ),
         ),
-        inAsyncCall: _isInAsyncCall,
+        isLoading: _isLoading,
         // demo of some additional parameters
         opacity: 0.5,
         progressIndicator: CircularProgressIndicator(),
