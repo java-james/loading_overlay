@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:modal_progress_hud/loading_overlay.dart';
 
 void main() {
   group('Modal Progress HUD', () {
-    Widget sut(bool inAsyncCall, Offset offset) {
+    Widget sut(bool isLoading, Offset offset) {
       return MaterialApp(
-        home: new ModalProgressHUD(
-          inAsyncCall: inAsyncCall,
-          offset: offset,
+        home: new LoadingOverlay(
+          isLoading: isLoading,
           child: Text(''),
         ),
       );
     }
 
-    testWidgets('should show progress indicator when in async call',
+    testWidgets('should show progress indicator when loading',
         (tester) async {
       final inAsyncCall = true;
       await tester.pumpWidget(sut(inAsyncCall, null));
@@ -24,7 +23,7 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('should not show progress indicator when not in async call',
+    testWidgets('should not show progress indicator when not loading',
         (tester) async {
       final inAsyncCall = false;
       await tester.pumpWidget(sut(inAsyncCall, null));
@@ -35,9 +34,9 @@ void main() {
 
     testWidgets('should allow positioning of progress indicator',
         (tester) async {
-      final inAsyncCall = true;
+      final isLoading = true;
       final offset = Offset(0.1, 0.1);
-      await tester.pumpWidget(sut(inAsyncCall, offset));
+      await tester.pumpWidget(sut(isLoading, offset));
 
       expect(find.byType(Positioned), findsOneWidget);
       expect(find.byType(Text), findsOneWidget);
