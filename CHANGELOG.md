@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.2.0]
 * Add fading effect
 * Rename to loading_overlay
 * Remove optional offset
