@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  final Finder login = find.byType(RaisedButton);
+  final login = find.byType(RaisedButton);
 
   group('Login Page', () {
-    final Finder userName = find.byKey(Key('username'));
-    final Finder password = find.byKey(Key('password'));
+    final userName = find.byKey(Key('username'));
+    final password = find.byKey(Key('password'));
 
     final userSyncErrorMsg = 'Username must be at least 8 characters';
     final userASyncErrorMsg = 'Incorrect user name';
@@ -27,7 +27,7 @@ void main() {
       isLoggedIn = false;
     });
 
-    testWidgets('should trigger sync validation', (WidgetTester tester) async {
+    testWidgets('should trigger sync validation', (tester) async {
       await tester.pumpWidget(sut);
 
       await tester.tap(userName);
@@ -47,9 +47,7 @@ void main() {
       expect(isLoggedIn, isFalse);
     });
 
-    testWidgets(
-        'should trigger pass sync validator only on good username and no password ',
-        (WidgetTester tester) async {
+    testWidgets('should trigger pass sync validator only on good username and no password ', (tester) async {
       await tester.pumpWidget(sut);
 
       await tester.tap(userName);
@@ -67,8 +65,7 @@ void main() {
       expect(isLoggedIn, isFalse);
     });
 
-    testWidgets('should trigger user async validator only on bad username',
-        (WidgetTester tester) async {
+    testWidgets('should trigger user async validator only on bad username', (tester) async {
       await tester.pumpWidget(sut);
 
       //
@@ -90,9 +87,7 @@ void main() {
       expect(isLoggedIn, isFalse);
     });
 
-    testWidgets(
-        'should trigger pass async validator only on good username and bad password ',
-        (WidgetTester tester) async {
+    testWidgets('should trigger pass async validator only on good username and bad password ', (tester) async {
       await tester.pumpWidget(sut);
 
       await tester.tap(userName);
@@ -113,8 +108,7 @@ void main() {
       expect(isLoggedIn, isFalse);
     });
 
-    testWidgets('should not trigger any validators on good login',
-        (WidgetTester tester) async {
+    testWidgets('should not trigger any validators on good login', (tester) async {
       await tester.pumpWidget(sut);
 
       await tester.tap(userName);
@@ -139,9 +133,9 @@ void main() {
   });
 
   group('App', () {
-    testWidgets('App smoke test', (WidgetTester tester) async {
+    testWidgets('App smoke test', (tester) async {
       // Build our app and trigger a frame.
-      await tester.pumpWidget(new MyApp());
+      await tester.pumpWidget(MyApp());
 
       expect(find.byType(LoginPage), findsOneWidget);
 
