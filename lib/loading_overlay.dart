@@ -24,9 +24,9 @@ class LoadingOverlay extends StatefulWidget {
   final Widget child;
 
   LoadingOverlay({
-    @required this.opacity,
     @required this.isLoading,
     @required this.child,
+    this.opacity = 0.5,
     this.progressIndicator = const CircularProgressIndicator(),
     this.color,
   });
@@ -49,7 +49,9 @@ class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProvid
     _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
     _animation.addStatusListener((status) {
+      // ignore: unnecessary_statements
       status == AnimationStatus.forward ? setState(() => {_overlayVisible = true}) : null;
+      // ignore: unnecessary_statements
       status == AnimationStatus.dismissed ? setState(() => {_overlayVisible = false}) : null;
     });
   }

@@ -8,7 +8,7 @@ Inspired by [this](https://codingwithjoe.com/flutter-how-to-build-a-modal-progre
 
 ## Demo
 
-![Demo](https://raw.githubusercontent.com/mmcc007/modal_progress_hud/master/modal_progress_hud.gif)
+![Demo](https://raw.githubusercontent.com/java-james/loading_overlay/master/loading_overlay.gif)
 
 *See example for details*
 
