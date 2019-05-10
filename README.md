@@ -51,9 +51,9 @@ Widget build(BuildContext context) {
 The current parameters are customizable in the constructor
 ```dart
 LoadingOverlay({
-    @required this.opacity,
     @required this.isLoading,
     @required this.child,
+    this.opacity = 0.5,
     this.progressIndicator = const CircularProgressIndicator(),
     this.color,
 });
