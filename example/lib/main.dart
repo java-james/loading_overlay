@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/loading_overlay.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 void main() => runApp(MyApp());
 

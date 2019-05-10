@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:modal_progress_hud/loading_overlay.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 void main() {
   group('Modal Progress HUD', () {
