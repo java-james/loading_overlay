@@ -40,7 +40,7 @@ void main() {
       driver.waitForAbsent(find.text(passASync));
 
       // verify not logged in
-      String loginStatus = await driver.getText(notLoggedIn);
+      final loginStatus = await driver.getText(notLoggedIn);
       expect(loginStatus, equals('Not logged in'));
     });
 
@@ -62,14 +62,14 @@ void main() {
       driver.waitForAbsent(find.text(passASync));
 
       // verify not logged in
-      String loginStatus = await driver.getText(notLoggedIn);
+      final loginStatus = await driver.getText(notLoggedIn);
       expect(loginStatus, equals('Not logged in'));
-      final SerializableFinder loggedIn = find.byValueKey('loggedIn');
+      final loggedIn = find.byValueKey('loggedIn');
       await driver.waitForAbsent(loggedIn);
     });
 
     test('try to login', () async {
-      String loginStatus = await driver.getText(notLoggedIn);
+      final loginStatus = await driver.getText(notLoggedIn);
       expect(loginStatus, equals('Not logged in'));
 
       await driver.tap(userName);
@@ -89,7 +89,7 @@ void main() {
       driver.waitForAbsent(find.text(passASync));
 
       await driver.waitFor(find.byValueKey('loggedIn'));
-      final SerializableFinder loggedIn = find.byValueKey('loggedIn');
+      final loggedIn = find.byValueKey('loggedIn');
       expect(loggedIn, isNotNull);
     });
   });

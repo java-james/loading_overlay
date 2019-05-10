@@ -7,16 +7,14 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: LoginPage(
-        onSignIn: () => print('login successful!'),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => MaterialApp(
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: LoginPage(
+          onSignIn: () => print('login successful!'),
+        ),
+      );
 }
 
 class LoginPage extends StatefulWidget {
@@ -79,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
       _loginFormKey.currentState.save();
 
       // dismiss keyboard during async call
-      FocusScope.of(context).requestFocus(new FocusNode());
+      FocusScope.of(context).requestFocus(FocusNode());
 
       // start the modal progress HUD
       setState(() {
@@ -97,9 +95,10 @@ class _LoginPageState extends State<LoginPage> {
               // username and password are correct
               _isInvalidAsyncPass = false;
               _isLoggedIn = true;
-            } else
+            } else {
               // username is correct, but password is incorrect
               _isInvalidAsyncPass = true;
+            }
           } else {
             // incorrect username and have not checked password result
             _isInvalidAsyncUser = true;
@@ -109,51 +108,49 @@ class _LoginPageState extends State<LoginPage> {
           // stop the modal progress HUD
           _isLoading = false;
         });
-        if (_isLoggedIn)
+        if (_isLoggedIn) {
           // do something
           widget._onSignIn();
+        }
       });
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Modal Progress HUD Demo'),
-        backgroundColor: Colors.blue,
-      ),
-      // display modal progress HUD (heads-up display, or indicator)
-      // when in async call
-      body: LoadingOverlay(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: buildLoginForm(context),
-          ),
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: Text('Modal Progress HUD Demo'),
+          backgroundColor: Colors.blue,
         ),
-        isLoading: _isLoading,
-        // demo of some additional parameters
-        opacity: 0.5,
-        progressIndicator: CircularProgressIndicator(),
-      ),
-    );
-  }
+        // display modal progress HUD (heads-up display, or indicator)
+        // when in async call
+        body: LoadingOverlay(
+          child: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              child: buildLoginForm(context),
+            ),
+          ),
+          isLoading: _isLoading,
+          // demo of some additional parameters
+          opacity: 0.5,
+          progressIndicator: CircularProgressIndicator(),
+        ),
+      );
 
   Widget buildLoginForm(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
+    final textTheme = Theme.of(context).textTheme;
     // run the validators on reload to process async results
     _loginFormKey.currentState?.validate();
     return Form(
-      key: this._loginFormKey,
+      key: _loginFormKey,
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(
               key: Key('username'),
-              decoration: InputDecoration(
-                  hintText: 'enter username', labelText: 'User Name'),
+              decoration: InputDecoration(hintText: 'enter username', labelText: 'User Name'),
               style: TextStyle(fontSize: 20.0, color: textTheme.button.color),
               validator: _validateUserName,
               onSaved: (value) => _username = value,
@@ -164,8 +161,7 @@ class _LoginPageState extends State<LoginPage> {
             child: TextFormField(
               key: Key('password'),
               obscureText: true,
-              decoration: InputDecoration(
-                  hintText: 'enter password', labelText: 'Password'),
+              decoration: InputDecoration(hintText: 'enter password', labelText: 'Password'),
               style: TextStyle(fontSize: 20.0, color: textTheme.button.color),
               validator: _validatePassword,
               onSaved: (value) => _password = value,
