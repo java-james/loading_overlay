@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.2.1]
+* Fix isLoading true on init
+
 ## [0.2.0]
 * Add fading effect
 * Rename to loading_overlay

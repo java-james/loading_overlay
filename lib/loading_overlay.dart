@@ -54,6 +54,9 @@ class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProvid
       // ignore: unnecessary_statements
       status == AnimationStatus.dismissed ? setState(() => {_overlayVisible = false}) : null;
     });
+    if (widget.isLoading) {
+      _controller.forward();
+    }
   }
 
   @override

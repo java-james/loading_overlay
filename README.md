@@ -1,6 +1,6 @@
 # loading_overlay
 
-A simple widget wrapper to enable modal progress HUD (a modal progress indicator, HUD = Heads Up Display)
+A simple widget wrapper to enable modal progress HUD (a modal progress indicator, HUD = Heads Up Display).
 
 A fork of [mobile_progress_hud](https://pub.dev/packages/modal_progress_hud)
 Inspired by [this](https://codingwithjoe.com/flutter-how-to-build-a-modal-progress-indicator/) article.
@@ -19,7 +19,7 @@ Add the package to your `pubspec.yml` file.
 
 ```yml
 dependencies:
-  loading_overlay: ^0.2.0
+  loading_overlay: ^0.2.1
 ```
 
 Next, import the library into your widget.
