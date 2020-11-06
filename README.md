@@ -2,7 +2,7 @@
 
 A simple widget wrapper to enable modal progress HUD (a modal progress indicator, HUD = Heads Up Display).
 
-A fork of [mobile_progress_hud](https://pub.dev/packages/modal_progress_hud)
+A fork of [modal_progress_hud](https://pub.dev/packages/modal_progress_hud)
 Inspired by [this](https://codingwithjoe.com/flutter-how-to-build-a-modal-progress-indicator/) article.
 
 
