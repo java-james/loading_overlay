@@ -17,42 +17,50 @@ import 'package:flutter/material.dart';
 /// HUD=Heads Up Display
 ///
 class LoadingOverlay extends StatefulWidget {
-  final bool isLoading;
-  final double opacity;
-  final Color color;
-  final Widget progressIndicator;
-  final Widget child;
-
-  LoadingOverlay({
-    @required this.isLoading,
-    @required this.child,
+  const LoadingOverlay({
+    required this.isLoading,
+    required this.child,
     this.opacity = 0.5,
     this.progressIndicator = const CircularProgressIndicator(),
     this.color,
   });
 
+  final bool isLoading;
+  final double opacity;
+  final Color? color;
+  final Widget progressIndicator;
+  final Widget child;
+
   @override
   _LoadingOverlayState createState() => _LoadingOverlayState();
 }
 
-class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
-  bool _overlayVisible;
-
+class _LoadingOverlayState extends State<LoadingOverlay>
+    with SingleTickerProviderStateMixin {
   _LoadingOverlayState();
+
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  late bool _overlayVisible;
 
   @override
   void initState() {
     super.initState();
     _overlayVisible = false;
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 300,
+      ),
+    );
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
     _animation.addStatusListener((status) {
-      // ignore: unnecessary_statements
-      status == AnimationStatus.forward ? setState(() => {_overlayVisible = true}) : null;
-      // ignore: unnecessary_statements
-      status == AnimationStatus.dismissed ? setState(() => {_overlayVisible = false}) : null;
+      status == AnimationStatus.forward
+          ? setState(() => {_overlayVisible = true})
+          : setState(() => {});
+      status == AnimationStatus.dismissed
+          ? setState(() => {_overlayVisible = false})
+          : setState(() => {});
     });
     if (widget.isLoading) {
       _controller.forward();
@@ -79,7 +87,7 @@ class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    var widgets = <Widget>[];
+    final widgets = <Widget>[];
     widgets.add(widget.child);
 
     if (_overlayVisible == true) {
