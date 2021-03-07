@@ -5,7 +5,7 @@ import 'package:loading_overlay/loading_overlay.dart';
 
 void main() {
   group('Modal Progress HUD', () {
-    Widget sut(isLoading, Offset offset) => MaterialApp(
+    Widget sut(isLoading, Offset? offset) => MaterialApp(
           home: LoadingOverlay(
             isLoading: isLoading,
             child: Text(''),
