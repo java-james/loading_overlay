@@ -19,13 +19,13 @@ import 'package:flutter/material.dart';
 class LoadingOverlay extends StatefulWidget {
   final bool isLoading;
   final double opacity;
-  final Color color;
+  final Color? color;
   final Widget progressIndicator;
   final Widget child;
 
   LoadingOverlay({
-    @required this.isLoading,
-    @required this.child,
+    required this.isLoading,
+    required this.child,
     this.opacity = 0.5,
     this.progressIndicator = const CircularProgressIndicator(),
     this.color,
@@ -36,9 +36,9 @@ class LoadingOverlay extends StatefulWidget {
 }
 
 class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
-  bool _overlayVisible;
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool? _overlayVisible;
 
   _LoadingOverlayState();
 
