@@ -1,7 +1,7 @@
 ## [Unreleased]
 
 ## [0.3.0]
-* add null-safety
+* Added null-safety
 
 ## [0.2.1]
 * Fix isLoading true on init
