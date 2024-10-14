@@ -19,7 +19,7 @@ Add the package to your `pubspec.yml` file.
 
 ```yml
 dependencies:
-  loading_overlay: ^0.2.1
+  loading_overlay: ^0.4.0
 ```
 
 Next, import the library into your widget.
@@ -43,7 +43,8 @@ Widget build(BuildContext context) {
       child: Container(
        Form(...)
       ),
-      isLoading: _isSaving_),
+      isLoading: _isSaving_
+      ),
   );
 }
 ```
