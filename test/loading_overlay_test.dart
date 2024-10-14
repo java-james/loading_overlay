@@ -19,13 +19,13 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('should not show progress indicator when not loading', (tester) async {
+    testWidgets('should not show progress indicator when not loading',
+        (tester) async {
       const inAsyncCall = false;
       await tester.pumpWidget(sut(inAsyncCall));
 
       expect(find.byType(Text), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
-
   });
 }

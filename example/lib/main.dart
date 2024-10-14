@@ -16,8 +16,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: LoginPage(
-          onSignIn: () => print('login successful!'),
-        ),
+        onSignIn: () => print('login successful!'),
+      ),
     );
   }
 }

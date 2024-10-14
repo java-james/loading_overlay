@@ -26,10 +26,9 @@ class LoadingOverlay extends StatefulWidget {
     Key? key,
     required this.isLoading,
     required this.child,
-    this.progressIndicator =
-        const CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-        ),
+    this.progressIndicator = const CircularProgressIndicator(
+      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+    ),
     this.color,
   }) : super(key: key);
 
