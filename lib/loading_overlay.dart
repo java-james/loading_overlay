@@ -12,47 +12,59 @@ import 'package:flutter/material.dart';
 ///
 /// The color of the modal barrier can be set using [color]
 ///
-/// The opacity of the modal barrier can be set using [opacity]
+/// The opacity of the modal barrier can be set using color.withOpacity(0.5)
 ///
 /// HUD=Heads Up Display
 ///
 class LoadingOverlay extends StatefulWidget {
   final bool isLoading;
-  final double opacity;
   final Color? color;
   final Widget progressIndicator;
   final Widget child;
 
-  LoadingOverlay({
+  const LoadingOverlay({
+    Key? key,
     required this.isLoading,
     required this.child,
-    this.opacity = 0.5,
-    this.progressIndicator = const CircularProgressIndicator(),
+    this.progressIndicator =
+        const CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        ),
     this.color,
-  });
+  }) : super(key: key);
 
   @override
-  _LoadingOverlayState createState() => _LoadingOverlayState();
+  LoadingOverlayState createState() => LoadingOverlayState();
 }
 
-class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProviderStateMixin {
+class LoadingOverlayState extends State<LoadingOverlay>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   bool? _overlayVisible;
 
-  _LoadingOverlayState();
+  LoadingOverlayState();
 
   @override
   void initState() {
     super.initState();
     _overlayVisible = false;
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 300));
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
     _animation.addStatusListener((status) {
       // ignore: unnecessary_statements
-      status == AnimationStatus.forward ? setState(() => {_overlayVisible = true}) : null;
+      status == AnimationStatus.forward
+          ? setState(() {
+              _overlayVisible = true;
+            })
+          : null;
       // ignore: unnecessary_statements
-      status == AnimationStatus.dismissed ? setState(() => {_overlayVisible = false}) : null;
+      status == AnimationStatus.dismissed
+          ? setState(() {
+              _overlayVisible = false;
+            })
+          : null;
     });
     if (widget.isLoading) {
       _controller.forward();
@@ -87,12 +99,10 @@ class _LoadingOverlayState extends State<LoadingOverlay> with SingleTickerProvid
         opacity: _animation,
         child: Stack(
           children: <Widget>[
-            Opacity(
-              child: ModalBarrier(
-                dismissible: false,
-                color: widget.color ?? Theme.of(context).colorScheme.background,
+            SizedBox.expand(
+              child: ColoredBox(
+                color: widget.color ?? Colors.black.withOpacity(0.5),
               ),
-              opacity: widget.opacity,
             ),
             Center(child: widget.progressIndicator),
           ],

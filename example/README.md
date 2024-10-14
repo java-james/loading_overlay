@@ -1,11 +1,16 @@
 # example
 
-Update: see this [article](https://medium.com/@nocnoc/the-secret-to-async-validation-on-flutter-forms-4b273c667c03) on Medium about async form validation
+A new Flutter project.
 
-Sample app showing how to use loading_overlay in a login screen
-that makes calls to a backend. Also shows method to manage form
-verification with async calls (see [flutter/issues/9688](https://github.com/flutter/flutter/issues/9688) for details).
+## Getting Started
 
-## Demo
-![Demo](https://github.com/java-james/loading_overlay/blob/master/loading_overlay.png)
+This project is a starting point for a Flutter application.
 
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.

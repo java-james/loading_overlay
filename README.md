@@ -32,15 +32,18 @@ Now, all you have to do is simply wrap your widget as a child of `ModalProgressH
 
 ```dart
 ...
-bool _saving = false
+bool _isSaving_ = false
 ...
 
 @override
 Widget build(BuildContext context) {
   return Scaffold(
-     body: LoadingOverlay(child: Container(
+     body: LoadingOverlay(
+      color: Colors.black.withOpacity(0.5),
+      child: Container(
        Form(...)
-     ), isLoading: _saving),
+      ),
+      isLoading: _isSaving_),
   );
 }
 ```
@@ -53,9 +56,8 @@ The current parameters are customizable in the constructor
 LoadingOverlay({
     @required this.isLoading,
     @required this.child,
-    this.opacity = 0.5,
     this.progressIndicator = const CircularProgressIndicator(),
-    this.color,
+    this.color = Colors.black.withOpacity(0.5),
 });
 ```
 
