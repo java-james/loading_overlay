@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.4.0]
+* Fix iOS opacity issue
+* explicit SDK 3.x support
+
 ## [0.3.0]
 * Added null-safety
 
