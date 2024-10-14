@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.4.1]
+* Update readme
+
 ## [0.4.0]
 * Fix iOS opacity issue
 * explicit SDK 3.x support
