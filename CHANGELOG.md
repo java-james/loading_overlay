@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.4.2]
+* Dart formatting across files
+
 ## [0.4.1]
 * Update readme
 

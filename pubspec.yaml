@@ -1,6 +1,6 @@
 name: loading_overlay
 description: A modal progress indicator widget that fades in and out. Wrap around another widget to block access to widget during an async call.
-version: 0.4.1
+version: 0.4.2
 homepage: https://github.com/java-james/loading_overlay
 
 environment:
