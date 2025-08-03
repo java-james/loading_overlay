@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+## [0.4.3]
+* Upgrade dev lint dependency
+
 ## [0.4.2]
 * Dart formatting across files
 
