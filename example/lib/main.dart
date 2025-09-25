@@ -53,11 +53,11 @@ class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Optionally can use [LoadingOverlay.withFuture] and pass in the Future from signIn too!
       body: LoadingOverlay(
         color: Colors.black.withOpacity(0.5),
         isLoading: _isLoading,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: SafeArea(
           child: Column(
             children: [
               TextField(

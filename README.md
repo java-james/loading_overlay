@@ -2,7 +2,7 @@
 
 A simple widget wrapper to enable modal progress HUD (a modal progress indicator, HUD = Heads Up Display).
 
-A fork of [modal_progress_hud](https://pub.dev/packages/modal_progress_hud)
+Started as a fork of [modal_progress_hud](https://pub.dev/packages/modal_progress_hud)
 Inspired by [this](https://codingwithjoe.com/flutter-how-to-build-a-modal-progress-indicator/) article.
 
 
@@ -28,7 +28,7 @@ Next, import the library into your widget.
 import 'package:loading_overlay/loading_overlay.dart';
 ```
 
-Now, all you have to do is simply wrap your widget as a child of `ModalProgressHUD`, typically a form, together with a boolean that is maintained in local state.
+Now, all you have to do is simply wrap your widget as a child of `LoadingOverlay`, typically a form, together with a boolean that is maintained in local state.
 
 ```dart
 ...
@@ -49,16 +49,37 @@ Widget build(BuildContext context) {
 }
 ```
 
+Alternatively, show the overlay until a Future completes (non-breaking new feature):
+
+```dart
+// Start an async operation
+final saveFuture = _saveFormAsync();
+
+return LoadingOverlay.withFuture(
+  future: saveFuture,
+  color: Colors.black.withOpacity(0.5),
+  child: Form(...),
+);
+```
+
 
 ## Options
 
 The current parameters are customizable in the constructor
 ```dart
 LoadingOverlay({
-    @required this.isLoading,
-    @required this.child,
-    this.progressIndicator = const CircularProgressIndicator(),
-    this.color = Colors.black.withOpacity(0.5),
+  required bool isLoading,
+  required Widget child,
+  Widget progressIndicator = const CircularProgressIndicator(),
+  Color? color,
+});
+
+// New: show overlay until a Future completes
+LoadingOverlay.withFuture({
+  required Future<void> future,
+  required Widget child,
+  Widget progressIndicator = const CircularProgressIndicator(),
+  Color? color,
 });
 ```
 
