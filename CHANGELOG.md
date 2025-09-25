@@ -1,5 +1,18 @@
 ## [Unreleased]
 
+## [0.5.0]
+* New: `LoadingOverlay.withFuture` constructor to display the overlay until a
+	provided `Future` completes.
+	- Starts visible immediately and hides automatically on completion (success
+		or error) using the existing fade-out animation.
+	- Works alongside the existing boolean `isLoading` constructor — no breaking
+		changes to the public API.
+	- If the `future` instance changes during rebuilds, the overlay will show
+		again and re-wire to the new `Future`'s completion.
+* Documentation: README updated with usage examples for both boolean and
+	future-driven patterns.
+* Tests: Added widget tests covering the new `withFuture` behavior.
+
 ## [0.4.3]
 * Upgrade dev lint dependency
 
