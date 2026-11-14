@@ -118,15 +118,13 @@ class LoadingOverlayState extends State<LoadingOverlay>
         vsync: this, duration: const Duration(milliseconds: 300));
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
     _animation.addStatusListener((status) {
-      if (status == AnimationStatus.forward) {
-        setState(() {
-          _overlayVisible = true;
-        });
-      } else if (status == AnimationStatus.dismissed) {
-        setState(() {
-          _overlayVisible = false;
-        });
+      if (status != AnimationStatus.forward &&
+          status != AnimationStatus.dismissed) {
+        return;
       }
+      setState(() {
+        _overlayVisible = status == AnimationStatus.forward;
+      });
     });
     if (widget.isLoading) {
       _controller.forward();
@@ -140,23 +138,31 @@ class LoadingOverlayState extends State<LoadingOverlay>
   @override
   void didUpdateWidget(LoadingOverlay oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget._managedByFuture &&
+        oldWidget._managedByFuture &&
+        oldWidget._future == widget._future) {
+      return;
+    }
+
     if (widget._managedByFuture) {
-      if (!oldWidget._managedByFuture || oldWidget._future != widget._future) {
-        _controller.forward();
-        _subscribeToFuture();
-      }
+      _controller.forward();
+      _subscribeToFuture();
       return;
     }
 
     // A pending future no longer controls visibility after switching modes.
     _activeCallbackIdentity = null;
-    if (oldWidget._managedByFuture || oldWidget.isLoading != widget.isLoading) {
-      if (widget.isLoading) {
-        _controller.forward();
-      } else {
-        _controller.reverse();
-      }
+    if (!oldWidget._managedByFuture &&
+        oldWidget.isLoading == widget.isLoading) {
+      return;
     }
+
+    if (widget.isLoading) {
+      _controller.forward();
+      return;
+    }
+
+    _controller.reverse();
   }
 
   void _subscribeToFuture() {
@@ -185,27 +191,23 @@ class LoadingOverlayState extends State<LoadingOverlay>
   }
 
   @override
-  Widget build(BuildContext context) {
-    var widgets = <Widget>[];
-    widgets.add(widget.child);
-
-    if (_overlayVisible) {
-      final modal = FadeTransition(
-        opacity: _animation,
-        child: Stack(
-          children: <Widget>[
-            SizedBox.expand(
-              child: ColoredBox(
-                color: widget.color ?? const Color(0x80000000),
+  Widget build(BuildContext context) => Stack(
+        children: <Widget>[
+          widget.child,
+          if (_overlayVisible)
+            FadeTransition(
+              opacity: _animation,
+              child: Stack(
+                children: <Widget>[
+                  SizedBox.expand(
+                    child: ColoredBox(
+                      color: widget.color ?? const Color(0x80000000),
+                    ),
+                  ),
+                  Center(child: widget.progressIndicator),
+                ],
               ),
             ),
-            Center(child: widget.progressIndicator),
-          ],
-        ),
+        ],
       );
-      widgets.add(modal);
-    }
-
-    return Stack(children: widgets);
-  }
 }
