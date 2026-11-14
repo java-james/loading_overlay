@@ -1,3 +1,5 @@
+## [Unreleased]
+
 ## [0.6.0]
 
 * **Breaking:** require Flutter 3.50+ and Dart `^3.14.0`.
