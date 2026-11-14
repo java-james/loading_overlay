@@ -15,26 +15,26 @@ Add to your `pubspec.yaml`, then run `flutter pub get`:
 ```yaml
 dependencies:
   loading_overlay: ^0.6.0
-  material_ui: ^1.11.0
 ```
+
+The default spinner uses `material_ui`, installed automatically. Add it directly
+only if your app imports it.
 
 ## Usage
 
 Import the package:
 
 ```dart
+import 'package:flutter/widgets.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:material_ui/material_ui.dart';
 ```
 
 Wrap your content and rebuild when your `isSaving` boolean changes:
 
 ```dart
-return Scaffold(
-  body: LoadingOverlay(
-    isLoading: isSaving,
-    child: const Center(child: Text('Your content')),
-  ),
+return LoadingOverlay(
+  isLoading: isSaving,
+  child: const Center(child: Text('Your content')),
 );
 ```
 
@@ -73,9 +73,10 @@ Both constructors accept these optional parameters:
 
 Requires Flutter 3.50+ and Dart `^3.14.0`.
 
-**Upgrading from 0.5.x:** migrate your app's Material imports, themes, and
-localization delegates to `material_ui`. See the
-[Flutter migration guide](https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui).
+**Upgrading from 0.5.x:** the default spinner now uses `material_ui` and no longer
+reads themes from `package:flutter/material.dart`. To retain legacy spinner
+styling, pass your own `progressIndicator` or
+[migrate your Material theme](https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui).
 
 See [Contributing](CONTRIBUTING.md) for development requirements and checks.
 

@@ -1,10 +1,13 @@
 ## [0.6.0]
 
 * **Breaking:** require Flutter 3.50+ and Dart `^3.14.0`.
-* **Breaking:** migrate Material widgets to `material_ui`. Add `material_ui` to
-  your app's dependencies and migrate Material imports, themes and localization
-  delegates together. See the [Flutter migration guide](https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui).
   Apps on older Flutter versions can continue using 0.5.x.
+* **Breaking:** the default spinner now uses `material_ui` and no longer reads
+  themes from `package:flutter/material.dart`. To retain legacy spinner styling,
+  pass your own `progressIndicator` or
+  [migrate your Material theme](https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui).
+  `material_ui` is installed transitively; apps only need to declare it directly
+  if they import it.
 
 * Fix stale future completions hiding newer loading operations or overriding
   manually controlled visibility.
