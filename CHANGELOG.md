@@ -1,3 +1,5 @@
+## [Unreleased]
+
 ## [0.7.0]
 
 * Add `LoadingOverlayController`, `LoadingOverlayScope`, and the
