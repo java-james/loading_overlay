@@ -1,138 +1,80 @@
 # loading_overlay
 
-A simple widget wrapper to enable modal progress HUD (a modal progress indicator, HUD = Heads Up Display).
+A Flutter loading overlay with a dimmed backdrop and a 300 ms fade.
+Control it with a boolean or let it follow a `Future`.
 
-Started as a fork of [modal_progress_hud](https://pub.dev/packages/modal_progress_hud)
-Inspired by [this](https://codingwithjoe.com/flutter-how-to-build-a-modal-progress-indicator/) article.
+[pub.dev](https://pub.dev/packages/loading_overlay) ·
+[API reference](https://pub.dev/documentation/loading_overlay/latest/)
 
+![Loading overlay on a login form](https://raw.githubusercontent.com/java-james/loading_overlay/master/loading_overlay.gif)
 
-## Demo
+## Install
 
-![Demo](https://raw.githubusercontent.com/java-james/loading_overlay/master/loading_overlay.gif)
+Add to your `pubspec.yaml`, then run `flutter pub get`:
 
-*See example for details*
-
-
-## Usage
-
-Add the package to your `pubspec.yaml` file.
-
-```yml
+```yaml
 dependencies:
   loading_overlay: ^0.5.0
 ```
 
-Next, import the library into your widget.
+## Usage
+
+Import the package:
 
 ```dart
 import 'package:loading_overlay/loading_overlay.dart';
 ```
 
-Now, all you have to do is simply wrap your widget as a child of `LoadingOverlay`, typically a form, together with a boolean that is maintained in local state.
+Wrap your content and rebuild when your `isSaving` boolean changes:
 
 ```dart
-...
-bool _isSaving = false;
-...
-
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-     body: LoadingOverlay(
-      color: const Color(0x80000000),
-      isLoading: _isSaving,
-      child: Form(...),
-      ),
-  );
-}
-```
-
-Alternatively, show the overlay until a Future completes. Create and retain the
-future in `initState` or an event handler, before building the overlay. Starting
-the operation inside `build` would restart it whenever the parent rebuilds.
-
-```dart
-// saveFuture was created and retained before this build.
-return LoadingOverlay.withFuture(
-  future: saveFuture,
-  color: const Color(0x80000000),
-  child: Form(...),
+return Scaffold(
+  body: LoadingOverlay(
+    isLoading: isSaving,
+    child: const Center(child: Text('Your content')),
+  ),
 );
 ```
 
-Both success and failure dismiss the overlay. Await or handle the original future
-to report errors to the user. The overlay does not change that future's result.
-If you supply a different future, the overlay stays visible until the new future
-finishes; completion of an older operation does not hide it. Rebuilding with the
-same completed future does not restart the overlay.
+### Follow a future
 
-The overlay blocks pointer taps while visible, including during its fade-out.
-It does not disable keyboard or accessibility actions on the child. Guard async
-handlers against duplicate submissions, as shown in the example's `signIn`
-method; this also covers taps arriving before the overlay's first frame.
+Create and retain `saveFuture` (`Future<void>`) before `build`, for example in
+`initState` or an event handler:
 
-
-## Options
-
-The current parameters are customizable in the constructor
 ```dart
-LoadingOverlay({
-  required bool isLoading,
-  required Widget child,
-  Widget progressIndicator = const CircularProgressIndicator(),
-  Color? color,
-});
-
-// New: show overlay until a Future completes
-LoadingOverlay.withFuture({
-  required Future<void> future,
-  required Widget child,
-  Widget progressIndicator = const CircularProgressIndicator(),
-  Color? color,
-});
+return LoadingOverlay.withFuture(
+  future: saveFuture,
+  child: const Center(child: Text('Your content')),
+);
 ```
 
-Update: See this [article](https://medium.com/@nocnoc/the-secret-to-async-validation-on-flutter-forms-4b273c667c03) on Medium about async form validation
+Success and failure both dismiss the overlay. Handle errors on the original
+future. Only the latest future controls visibility; rebuilding with the same
+completed future keeps the overlay hidden.
 
-See the [example application](https://github.com/java-james/loading_overlay/tree/master/example) source
-for a complete sample app using the modal progress HUD. Included in the
-example is a login form that guards against duplicate submissions during a
-simulated async call.
+### Interaction
 
-## Compatibility and development
+The overlay blocks pointer taps, including during fade-out. Keyboard and
+accessibility actions remain available, so guard async handlers against duplicate
+submissions. The [login example](example/lib/main.dart) shows how.
 
-The library retains its Dart `>=2.12.0 <4.0.0` constraint and both existing
-constructors. The default indicator, backdrop and 300 ms fade are unchanged.
-Development tooling and the example require Flutter 3.32 / Dart 3.8 or newer.
-Building the example for Android requires Flutter 3.50 and JDK 17 or newer.
+## Customize
 
-The SDK Material import is intentionally retained for compatibility with existing
-apps. Migration to the standalone `material_ui` package is reserved for a future
-breaking release; its import deprecation is suppressed only at the relevant
-imports.
+Both constructors accept these optional parameters:
 
-Run checks from the repository root:
+| Parameter | Default |
+| --- | --- |
+| `color` | Translucent black: `const Color(0x80000000)` |
+| `progressIndicator` | White `CircularProgressIndicator` |
 
-```sh
-flutter pub get
-flutter analyze
-./scripts/runTests.sh
-```
+## Compatibility
 
-CI is configured to test Flutter 3.32 and 3.50, build the web and Android examples,
-and run the library tests as a consumer on Flutter 2.0 / Dart 2.12. To run that
-consumer check locally, put the Flutter SDK being checked on your `PATH` and run:
+Requires Flutter with Dart `>=2.12.0 <4.0.0`. No runtime dependencies beyond Flutter.
+See [Contributing](CONTRIBUTING.md) for development requirements and checks.
 
-```sh
-./scripts/test-compatibility.sh
-```
+[Changelog](CHANGELOG.md) ·
+[Report an issue](https://github.com/java-james/loading_overlay/issues)
 
-The consumer check uses a temporary package so the library's development-only
-lint dependency does not prevent testing older SDKs.
-
-
-### Issues and feedback
-
-Please file [issues](https://github.com/java-james/loading_overlay/issues/new)
-to send feedback or report a bug. Thank you!
+[MIT licensed](LICENSE). Forked from
+[modal_progress_hud](https://pub.dev/packages/modal_progress_hud).
 
