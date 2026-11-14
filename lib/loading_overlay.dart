@@ -1,3 +1,6 @@
+// Retain the SDK Material library for consumers on Flutter 2.x and 3.x.
+// Migrating to material_ui requires a separate breaking release.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 /// Our custom fork of https://pub.dev/packages/modal_progress_hud adding a fading effect
@@ -12,7 +15,8 @@ import 'package:flutter/material.dart';
 ///
 /// The color of the modal barrier can be set using [color]
 ///
-/// The opacity of the modal barrier can be set using color.withOpacity(0.5)
+/// The opacity of the modal barrier is the alpha channel of [color], for example
+/// `const Color(0x80000000)` for a translucent black backdrop.
 ///
 /// HUD=Heads Up Display
 ///
@@ -42,6 +46,13 @@ class LoadingOverlay extends StatefulWidget {
   /// Constructs a LoadingOverlay that is shown immediately and remains
   /// visible until [future] completes (success or error). This is a
   /// non-breaking alternative to controlling visibility with [isLoading].
+  ///
+  /// Obtain the future before building this widget, so rebuilds do not restart
+  /// the operation. Replacing it starts a new loading cycle; completion of a
+  /// previous future does not hide the new cycle.
+  ///
+  /// This widget observes errors only to hide the overlay. Callers can still
+  /// await or handle errors on the original future to display an error message.
   factory LoadingOverlay.withFuture({
     Key? key,
     required Future<void> future,
@@ -55,9 +66,9 @@ class LoadingOverlay extends StatefulWidget {
       key: key,
       // Start visible and let the State hide when future completes.
       isLoading: true,
-      child: child,
       progressIndicator: progressIndicator,
       color: color,
+      child: child,
     )._withFuture(future);
   }
 
@@ -66,11 +77,11 @@ class LoadingOverlay extends StatefulWidget {
     return LoadingOverlay._internal(
       key: key,
       isLoading: isLoading,
-      child: child,
       progressIndicator: progressIndicator,
       color: color,
       future: future,
       managedByFuture: true,
+      child: child,
     );
   }
 
@@ -95,69 +106,80 @@ class LoadingOverlayState extends State<LoadingOverlay>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  bool? _overlayVisible;
+  bool _overlayVisible = false;
+  Object? _activeCallbackIdentity;
 
   LoadingOverlayState();
 
   @override
   void initState() {
     super.initState();
-    _overlayVisible = false;
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 300));
     _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
     _animation.addStatusListener((status) {
-      // ignore: unnecessary_statements
-      status == AnimationStatus.forward
-          ? setState(() {
-              _overlayVisible = true;
-            })
-          : null;
-      // ignore: unnecessary_statements
-      status == AnimationStatus.dismissed
-          ? setState(() {
-              _overlayVisible = false;
-            })
-          : null;
+      if (status == AnimationStatus.forward) {
+        setState(() {
+          _overlayVisible = true;
+        });
+      } else if (status == AnimationStatus.dismissed) {
+        setState(() {
+          _overlayVisible = false;
+        });
+      }
     });
     if (widget.isLoading) {
       _controller.forward();
     }
 
-    // If managed by a Future, hide the overlay when the Future completes
-    // regardless of success or error.
-    if (widget._managedByFuture && widget._future != null) {
-      widget._future!.whenComplete(() {
-        if (!mounted) return;
-        _controller.reverse();
-      });
+    if (widget._managedByFuture) {
+      _subscribeToFuture();
     }
   }
 
   @override
   void didUpdateWidget(LoadingOverlay oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!oldWidget.isLoading && widget.isLoading) {
-      _controller.forward();
+    if (widget._managedByFuture) {
+      if (!oldWidget._managedByFuture || oldWidget._future != widget._future) {
+        _controller.forward();
+        _subscribeToFuture();
+      }
+      return;
     }
 
-    if (oldWidget.isLoading && !widget.isLoading) {
+    // A pending future no longer controls visibility after switching modes.
+    _activeCallbackIdentity = null;
+    if (oldWidget._managedByFuture || oldWidget.isLoading != widget.isLoading) {
+      if (widget.isLoading) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    }
+  }
+
+  void _subscribeToFuture() {
+    final callbackIdentity = Object();
+    _activeCallbackIdentity = callbackIdentity;
+
+    void onComplete() {
+      if (!mounted || _activeCallbackIdentity != callbackIdentity) return;
+      _activeCallbackIdentity = null;
       _controller.reverse();
     }
 
-    // If managed by Future and the Future instance changed, show overlay
-    // and wire up completion to hide it again.
-    if (widget._managedByFuture && oldWidget._future != widget._future) {
-      _controller.forward();
-      widget._future?.whenComplete(() {
-        if (!mounted) return;
-        _controller.reverse();
-      });
-    }
+    // Handle both outcomes on this subscription. An ignored whenComplete()
+    // future would otherwise propagate errors as uncaught asynchronous errors.
+    widget._future!.then<void>(
+      (_) => onComplete(),
+      onError: (Object error, StackTrace stackTrace) => onComplete(),
+    );
   }
 
   @override
   void dispose() {
+    _activeCallbackIdentity = null;
     _controller.dispose();
     super.dispose();
   }
@@ -167,14 +189,14 @@ class LoadingOverlayState extends State<LoadingOverlay>
     var widgets = <Widget>[];
     widgets.add(widget.child);
 
-    if (_overlayVisible == true) {
+    if (_overlayVisible) {
       final modal = FadeTransition(
         opacity: _animation,
         child: Stack(
           children: <Widget>[
             SizedBox.expand(
               child: ColoredBox(
-                color: widget.color ?? Colors.black.withOpacity(0.5),
+                color: widget.color ?? const Color(0x80000000),
               ),
             ),
             Center(child: widget.progressIndicator),
