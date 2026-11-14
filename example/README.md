@@ -1,23 +1,23 @@
-# loading_overlay example
+# loading_overlay playground
 
-This login form shows how to keep the form visible while blocking pointer taps
-and preventing duplicate sign-ins during an asynchronous operation. It also
-demonstrates safely disposing the form's controllers and leaving the page while
-a request is pending.
-
-Run from this directory:
+From the repository’s `example/` directory, run on Flutter 3.50+ / Dart 3.14+:
 
 ```sh
 flutter pub get
 flutter run -d chrome
-flutter test
 ```
 
-The library and example require Flutter 3.50+ / Dart 3.14+ and use `material_ui`.
+The example imports `material_ui`; the core library only depends on Flutter and
+supports Flutter 3.27+.
 
-The Android project targets Flutter 3.50 with AGP 9.3.1, Gradle 9.5 and JDK 17 or
-newer. It uses AGP's built-in Kotlin support. Build it with:
+Try seven scenarios: boolean loading, upload progress, overlapping requests,
+error cleanup, following a Future, a fast operation that avoids flashing, and
+app-wide loading. Toggle the theme and resize the window to explore both layouts.
+All operations are simulated locally; the demo makes no API requests.
 
-```sh
-flutter build apk --debug
-```
+See `lib/recipes.dart` for compact, compiled integration patterns. The showcase
+uses a custom loading card; omit `overlayBuilder` for the built-in ring/messages.
+
+The widget tests are included in the published source. From `example/`, run
+`flutter test` with Flutter 3.50. For platform builds, image generation, and demo
+deployment from a repository checkout, see the [contributing guide](../CONTRIBUTING.md).

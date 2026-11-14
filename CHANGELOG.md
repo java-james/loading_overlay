@@ -1,4 +1,37 @@
-## [Unreleased]
+## [0.7.0]
+
+* Add `LoadingOverlayController`, `LoadingOverlayScope`, and the
+  `context.loadingOverlay` extension. Run async operations with automatic cleanup
+  and original result/error propagation, without a global singleton.
+* Add independent task handles and typed `LoadingOverlayData`. Concurrent tasks
+  cannot dismiss each other; the latest unfinished task supplies progress/status.
+* Add determinate progress, status messages, custom content builders, inherited
+  styling, optional blur, show delay, and minimum visible duration.
+* Block underlying pointer, keyboard focus, and accessibility interaction through
+  fade-out. Add live announcements, localized labels, reduced-motion behavior,
+  and `PopScope` back protection with an app-wide route guard.
+* Cancel existing touch/trackpad gestures when blocking begins, preserve
+  accessibility outside regional overlays, and retain custom builder semantics
+  without duplicate announcements.
+* Support loading started during descendant initialization. Keep timing settings
+  stable through a visibility cycle while allowing appearance updates.
+* **Breaking:** the default indicator is now a design-system-independent
+  `LoadingOverlayIndicator`. Material indicator themes no longer apply. Supply
+  `progressIndicator` to keep a Material/Cupertino spinner.
+* **Breaking:** background keyboard/accessibility actions and user back navigation
+  are blocked by default. `blockInteraction` and `blockBack` provide opt-outs.
+* **Breaking:** the implementation State class is now private. Use boolean state
+  or a controller instead of `LoadingOverlayState`.
+* Remove the `material_ui` runtime dependency and support Flutter 3.27 / Dart 3.6
+  onward. The example uses Flutter 3.50 and declares its own `material_ui` dependency.
+* Retain boolean and Future constructors, custom indicators/colors, the default
+  backdrop and 300 ms fade. Delay and minimum duration remain opt-in.
+* Replace the example with a responsive interactive playground and compiled
+  integration recipes. Add migration and agent guides, minimum/current SDK tests,
+  web/Wasm builds, and package dry-run validation.
+
+See [migration guidance](doc/migration.md) for the changed interaction defaults
+and mappings from other loading packages.
 
 ## [0.6.0]
 

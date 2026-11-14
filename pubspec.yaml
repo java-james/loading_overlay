@@ -1,18 +1,30 @@
 name: loading_overlay
-description: A Flutter loading overlay with a dimmed backdrop and a fade animation, controlled by a boolean or a Future.
-version: 0.6.0
+description: Accessible Flutter loading overlays with concurrent async tasks, progress, scoped controllers, automatic cleanup, and no extra runtime dependencies.
+version: 0.7.0
 homepage: https://github.com/java-james/loading_overlay
+repository: https://github.com/java-james/loading_overlay
+issue_tracker: https://github.com/java-james/loading_overlay/issues
+screenshots:
+  - description: A custom loading overlay with upload progress and automatic async cleanup.
+    path: doc/images/loading-overlay.png
+  - description: Default, custom, and section-level loading overlays in real Flutter layouts.
+    path: doc/images/overlay-styles.png
+topics:
+  - loading
+  - overlay
+  - progress
+  - async
+  - widgets
 
 environment:
-  sdk: ^3.14.0
-  flutter: '>=3.50.0'
+  sdk: ">=3.6.0 <4.0.0"
+  flutter: '>=3.27.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  material_ui: ^1.11.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
+  flutter_lints: ^5.0.0

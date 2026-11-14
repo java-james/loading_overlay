@@ -1,0 +1,42 @@
+name: Publish playground
+
+# Publishing is an explicit release-owner action, never a side effect of a PR.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: playground-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          flutter-version: '3.50.0'
+          channel: stable
+          cache: true
+      - name: Build playground
+        working-directory: example
+        run: flutter build web --release --base-href /loading_overlay/
+      - uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: example/build/web
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy playground
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1
