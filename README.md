@@ -17,9 +17,6 @@ dependencies:
   loading_overlay: ^0.6.0
 ```
 
-The default spinner uses `material_ui`, installed automatically. Add it directly
-only if your app imports it.
-
 ## Usage
 
 Import the package:
