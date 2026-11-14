@@ -3,15 +3,18 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 
-Widget manualOverlay(bool isLoading) => MaterialApp(
-  home: LoadingOverlay(isLoading: isLoading, child: const Text('child')),
-);
+import 'test_app.dart';
 
-Widget futureOverlay(Future<void> future) => MaterialApp(
-  home: LoadingOverlay.withFuture(future: future, child: const Text('child')),
-);
+Widget manualOverlay(bool isLoading) => TestApp(
+      home: LoadingOverlay(isLoading: isLoading, child: const Text('child')),
+    );
+
+Widget futureOverlay(Future<void> future) => TestApp(
+      home:
+          LoadingOverlay.withFuture(future: future, child: const Text('child')),
+    );
 
 Future<void> finishFade(WidgetTester tester) async {
   // Process future callbacks, start the animation's first frame, then finish it.
@@ -23,16 +26,16 @@ Future<void> finishFade(WidgetTester tester) async {
 
 void main() {
   group('Modal Progress HUD', () {
-    Widget sut(bool isLoading) => MaterialApp(
-      home: LoadingOverlay(isLoading: isLoading, child: const Text('')),
-    );
+    Widget sut(bool isLoading) => TestApp(
+          home: LoadingOverlay(isLoading: isLoading, child: const Text('')),
+        );
 
     testWidgets('should show progress indicator when loading', (tester) async {
       const inAsyncCall = true;
       await tester.pumpWidget(sut(inAsyncCall));
 
       expect(find.byType(Text), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(LoadingOverlayIndicator), findsOneWidget);
     });
 
     testWidgets('should not show progress indicator when not loading', (
@@ -42,14 +45,14 @@ void main() {
       await tester.pumpWidget(sut(inAsyncCall));
 
       expect(find.byType(Text), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
     });
   });
 
   group('LoadingOverlay.withFuture', () {
     testWidgets('shows progress indicator immediately', (tester) async {
       final completer = Completer<void>();
-      final widget = MaterialApp(
+      final widget = TestApp(
         home: LoadingOverlay.withFuture(
           future: completer.future,
           child: const Text('child'),
@@ -59,14 +62,14 @@ void main() {
       await tester.pumpWidget(widget);
 
       expect(find.byType(Text), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(LoadingOverlayIndicator), findsOneWidget);
     });
 
     testWidgets('hides progress indicator when future completes', (
       tester,
     ) async {
       final completer = Completer<void>();
-      final widget = MaterialApp(
+      final widget = TestApp(
         home: LoadingOverlay.withFuture(
           future: completer.future,
           child: const Text('child'),
@@ -75,13 +78,13 @@ void main() {
 
       await tester.pumpWidget(widget);
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(LoadingOverlayIndicator), findsOneWidget);
 
       // Complete the future and allow reverse animation to finish
       completer.complete();
       await finishFade(tester);
 
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
     });
 
     for (final fail in [false, true]) {
@@ -101,10 +104,10 @@ void main() {
         }
         await finishFade(tester);
 
-        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.byType(LoadingOverlayIndicator), findsOneWidget);
         second.complete();
         await finishFade(tester);
-        expect(find.byType(CircularProgressIndicator), findsNothing);
+        expect(find.byType(LoadingOverlayIndicator), findsNothing);
       });
 
       testWidgets('ignores ${fail ? 'errors' : 'completion'} after disposal', (
@@ -146,7 +149,7 @@ void main() {
 
       expect(receivedError, same(error));
       expect(receivedStackTrace, same(stackTrace));
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -158,7 +161,7 @@ void main() {
       await finishFade(tester);
       operation.completeError(StateError('save failed'));
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -172,11 +175,11 @@ void main() {
       operation.complete();
       await finishFade(tester);
       await tester.pumpWidget(futureOverlay(operation.future));
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
       await tester.pump();
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
     });
 
     testWidgets('shows for a new future after the previous future completed', (
@@ -187,20 +190,20 @@ void main() {
       await tester.pumpWidget(futureOverlay(first.future));
       first.complete();
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
 
       await tester.pumpWidget(futureOverlay(second.future));
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(LoadingOverlayIndicator), findsOneWidget);
       second.complete();
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
     });
 
     testWidgets('handles synchronous completion', (tester) async {
       await tester.pumpWidget(futureOverlay(SynchronousFuture<void>(null)));
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -213,11 +216,11 @@ void main() {
 
       await tester.pumpWidget(futureOverlay(SynchronousFuture<void>(null)));
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
 
       operation.complete();
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -243,11 +246,11 @@ void main() {
 
       await tester.pumpWidget(futureOverlay(second.future));
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(LoadingOverlayIndicator), findsOneWidget);
 
       second.complete();
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
     });
 
     testWidgets('handles completion before the first fade finishes', (
@@ -258,7 +261,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 150));
       operation.complete();
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
     });
   });
 
@@ -278,7 +281,7 @@ void main() {
             await tester.pumpWidget(manualOverlay(isLoading));
             await finishFade(tester);
             expect(
-              find.byType(CircularProgressIndicator),
+              find.byType(LoadingOverlayIndicator),
               isLoading ? findsOneWidget : findsNothing,
             );
 
@@ -286,7 +289,7 @@ void main() {
               operation.complete();
               await finishFade(tester);
               expect(
-                find.byType(CircularProgressIndicator),
+                find.byType(LoadingOverlayIndicator),
                 isLoading ? findsOneWidget : findsNothing,
               );
             }
@@ -302,10 +305,10 @@ void main() {
         await finishFade(tester);
         await tester.pumpWidget(futureOverlay(operation.future));
         await finishFade(tester);
-        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.byType(LoadingOverlayIndicator), findsOneWidget);
         operation.complete();
         await finishFade(tester);
-        expect(find.byType(CircularProgressIndicator), findsNothing);
+        expect(find.byType(LoadingOverlayIndicator), findsNothing);
       });
     }
   });
@@ -330,30 +333,30 @@ void main() {
       await tester.pump(const Duration(milliseconds: 150));
       expect(opacity(), closeTo(0, 0.01));
       await tester.pump(const Duration(milliseconds: 1));
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
     });
 
     testWidgets(
       'blocks child taps through fade-out and restores them afterwards',
       (tester) async {
         var taps = 0;
-        Widget app(bool loading) => MaterialApp(
-          home: LoadingOverlay(
-            isLoading: loading,
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: GestureDetector(
-                onTap: () => taps++,
-                child: const SizedBox(
-                  key: Key('tap-target'),
-                  width: 100,
-                  height: 100,
-                  child: ColoredBox(color: Colors.red),
+        Widget app(bool loading) => TestApp(
+              home: LoadingOverlay(
+                isLoading: loading,
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: GestureDetector(
+                    onTap: () => taps++,
+                    child: const SizedBox(
+                      key: Key('tap-target'),
+                      width: 100,
+                      height: 100,
+                      child: ColoredBox(color: Color(0xFFFF0000)),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        );
+            );
         await tester.pumpWidget(app(false));
         final position = tester.getCenter(find.byKey(const Key('tap-target')));
         await tester.tapAt(position);
@@ -377,12 +380,12 @@ void main() {
     testWidgets('preserves child state across rapid loading changes', (
       tester,
     ) async {
-      Widget app(bool loading) => MaterialApp(
-        home: LoadingOverlay(
-          isLoading: loading,
-          child: Form(child: const Text('form')),
-        ),
-      );
+      Widget app(bool loading) => TestApp(
+            home: LoadingOverlay(
+              isLoading: loading,
+              child: Form(child: const Text('form')),
+            ),
+          );
       await tester.pumpWidget(app(false));
       final childState = tester.state<FormState>(find.byType(Form));
       await tester.pumpWidget(app(true));
@@ -392,11 +395,11 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
       await tester.pumpWidget(app(true));
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(LoadingOverlayIndicator), findsOneWidget);
       expect(tester.state<FormState>(find.byType(Form)), same(childState));
       await tester.pumpWidget(app(false));
       await finishFade(tester);
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(LoadingOverlayIndicator), findsNothing);
       expect(tester.state<FormState>(find.byType(Form)), same(childState));
     });
 
@@ -408,7 +411,7 @@ void main() {
         const color = Color(0x40800000);
         final operation = Completer<void>();
         await tester.pumpWidget(
-          MaterialApp(
+          TestApp(
             home: useFuture
                 ? LoadingOverlay.withFuture(
                     future: operation.future,
@@ -425,7 +428,7 @@ void main() {
           ),
         );
         expect(find.text('custom progress'), findsOneWidget);
-        expect(find.byType(CircularProgressIndicator), findsNothing);
+        expect(find.byType(LoadingOverlayIndicator), findsNothing);
         expect(
           find.byWidgetPredicate(
             (widget) => widget is ColoredBox && widget.color == color,
@@ -446,39 +449,37 @@ void main() {
         ),
         findsOneWidget,
       );
-      final indicator = tester.widget<CircularProgressIndicator>(
-        find.byType(CircularProgressIndicator),
+      final indicator = tester.widget<LoadingOverlayIndicator>(
+        find.byType(LoadingOverlayIndicator),
       );
-      expect(indicator.valueColor!.value, Colors.white);
+      expect(indicator.color, const Color(0xFFFFFFFF));
     });
 
-    for (final brightness in [Brightness.light, Brightness.dark]) {
-      testWidgets('inherits the ${brightness.name} Material indicator theme', (
-        tester,
-      ) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            theme: ThemeData(
-              brightness: brightness,
-              progressIndicatorTheme: const ProgressIndicatorThemeData(
-                color: Colors.red,
-                strokeWidth: 7,
-                constraints: BoxConstraints.tightFor(width: 48, height: 48),
-              ),
+    testWidgets('inherits overlay theme and explicit style takes priority',
+        (tester) async {
+      Widget app({LoadingOverlayStyle? style}) => TestApp(
+            home: LoadingOverlayTheme(
+              data:
+                  const LoadingOverlayStyle(indicatorColor: Color(0xFFFF0000)),
+              child: LoadingOverlay(
+                  isLoading: true, style: style, child: const Text('child')),
             ),
-            home: const LoadingOverlay(isLoading: true, child: Text('child')),
-          ),
-        );
-
-        final indicator = find.byType(CircularProgressIndicator);
-        expect(tester.getSize(indicator), const Size(48, 48));
-        expect(Theme.of(tester.element(indicator)).brightness, brightness);
-        expect(
-          tester.widget<CircularProgressIndicator>(indicator).valueColor!.value,
-          Colors.white,
-        );
-        expect(indicator, paints..arc(color: Colors.white, strokeWidth: 7));
-      });
-    }
+          );
+      await tester.pumpWidget(app());
+      expect(
+          tester
+              .widget<LoadingOverlayIndicator>(
+                  find.byType(LoadingOverlayIndicator))
+              .color,
+          const Color(0xFFFF0000));
+      await tester.pumpWidget(app(
+          style: const LoadingOverlayStyle(indicatorColor: Color(0xFF00FF00))));
+      expect(
+          tester
+              .widget<LoadingOverlayIndicator>(
+                  find.byType(LoadingOverlayIndicator))
+              .color,
+          const Color(0xFF00FF00));
+    });
   });
 }

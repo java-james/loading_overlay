@@ -1,0 +1,33 @@
+.DS_Store
+.dart_tool/
+.idea/
+build/
+.packages
+.pub/
+# Exclude generated output, publishing infrastructure and platform runners.
+.github/
+coverage/
+lcov.info
+/scripts/*
+!/scripts/runTests.sh
+!/scripts/checkMinimum.sh
+tool/
+example/android/
+example/ios/
+example/linux/
+example/macos/
+example/windows/
+example/web/
+example/build/
+example/.dart_tool/
+example/.idea/
+example/coverage/
+example/.metadata
+example/pubspec.lock
+pubspec.lock
+
+# Image-generation tooling is not needed to evaluate or use the package.
+/example/tool/
+
+# Keep test/, example/test/, CONTRIBUTING.md and the two test scripts published.
+# They make the shipped behavior independently inspectable and reproducible.

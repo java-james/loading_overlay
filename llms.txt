@@ -1,0 +1,97 @@
+# loading_overlay 0.7.0
+
+Flutter-only loading overlay package. Flutter >=3.27.0, Dart >=3.6.0 <4.0.0.
+Import: package:loading_overlay/loading_overlay.dart
+Only runtime dependency: Flutter SDK. No mandatory Material or Cupertino package.
+
+## Choose an ownership model
+- Existing boolean: LoadingOverlay(isLoading: state, child: content).
+- Existing retained Future<T>: LoadingOverlay.withFuture(future: future, child: content).
+- Automatic async cleanup: LoadingOverlayScope(child: page), then from a descendant
+  context: await context.loadingOverlay.run<T>(() => operation(), message: 'Saving').
+- No BuildContext: own LoadingOverlayController, pass to LoadingOverlay.controlled
+  or LoadingOverlayScope(controller: controller, child: content), dispose the owner.
+- Live progress: final task = controller.start(message: 'Uploading', progress: 0);
+  try { await work; } finally { task.finish(); }
+  During work: task.update(message: 'Uploading', progress: fraction).
+
+## Contracts
+- run<T>(FutureOr<T> Function() operation, {String? message, double? progress})
+  returns the result, propagates the same errors/stacks, and always finishes its task.
+- Overlapping run/start tasks are independent; all must finish before hiding.
+- Latest STARTED unfinished task supplies message/progress. Updating an older task
+  does not move it to the front. Finishing the latest restores the preceding task.
+- update replaces both fields. Null clears a message/progress field.
+- progress must be null or finite in [0,1]. Invalid controller progress throws ArgumentError.
+- task.finish is idempotent; stale handles after reset/dispose are inert.
+- show/hide own one manual task; hide never dismisses independent run/start tasks.
+- reset hides all presentation but NEVER cancels underlying operations.
+- The controller implements ValueListenable<LoadingOverlayData>. Its value is a
+  snapshot with isLoading, activeTasks, message, and progress. isLoading describes
+  work, not minimum duration/fade completion.
+- A scope disposes its implicit controller only. External controllers are caller-owned.
+
+## Presentation
+- LoadingOverlayStyle: barrierColor, indicatorColor, messageStyle, alignment,
+  padding, blurSigma, duration, reverseDuration, showDelay, minimumVisibleDuration.
+- Defaults: white neutral ring, black 50% backdrop, 300ms fades, zero delay/minimum.
+- LoadingOverlayTheme(data: style, child: content) provides inherited defaults.
+- Explicit style replaces inherited style entirely. color overrides barrierColor.
+- progressIndicator replaces ring; overlayBuilder(context, LoadingOverlayData)
+  replaces full content. Do not supply both. Custom controls can be interactive.
+- Modal input blocking starts immediately, even before showDelay, and lasts through
+  minimum duration and fade-out. Reduced motion skips fades and pauses tickers.
+- Default semantics announce message or semanticsLabel ('Loading') and percentage.
+  Localize these strings. Background focus and semantics are excluded while modal.
+- Custom overlayBuilder content owns its status/progress semantics and controls;
+  the overlay provides a live region without adding another label/value.
+- Beginning modal loading cancels active touch/trackpad gestures in the child.
+  Regional overlays leave accessibility outside their bounds available.
+- Non-modal use needs blockInteraction:false AND blockBack:false.
+
+## Placement and navigation
+- Wrap a bounded child, whole Scaffold, or a page. Preserve normal Flutter constraints.
+- App-wide: MaterialApp(builder: (_, child) => LoadingOverlayScope(child: child!), ...).
+  Also works with MaterialApp.router and CupertinoApp builders; compose existing builders.
+- App-wide scope is above Navigator, so place LoadingOverlayBackGuard inside each
+  route needing back protection. Route-local overlays use PopScope automatically.
+- PopScope does not prevent direct Navigator.pop, route removals, or router redirects.
+- Nested scopes are independent. context.loadingOverlay uses the nearest scope and
+  does not subscribe to state; use ValueListenableBuilder to watch changes.
+
+## Avoid
+- Creating a Future or starting work repeatedly in build.
+- Using a BuildContext from ABOVE LoadingOverlayScope.
+- Treating presentation dismissal as request cancellation or request deduplication.
+- Retaining BuildContext across an await without checking mounted before later use.
+- Calling hide to finish work created by run/start; finish its handle instead.
+
+## Evaluating fit and behavior
+- Use for loading feedback around a widget, route, or whole app, with boolean,
+  retained Future, or independently owned async task control.
+- The API covers progress and ongoing work. Toasts, skeleton placeholders, and
+  cancellation of network requests are outside its scope.
+- Both test suites and their runner scripts are included in the published source.
+  Inspect tests for edge-case behavior; the README describes the public contracts.
+- With Flutter 3.50: ./scripts/runTests.sh (core and example tests).
+- With a separate Flutter 3.27 SDK: ./scripts/checkMinimum.sh /path/to/flutter/bin/flutter.
+- CI configuration and latest run results are linked from the README. Do not infer
+  that every platform or assistive technology has been tested from a generic
+  compatibility claim or a coverage percentage.
+
+## Sources
+- README.md: onboarding, styling, async, accessibility and navigation contracts.
+- doc/migration.md: migration from loading_overlay 0.x and competing APIs.
+- example/lib/recipes.dart: compiled integration patterns.
+- example/lib/main.dart: interactive runnable showcase (Flutter 3.50/material_ui).
+- test/controller_test.dart: async results/errors, concurrency and task ownership.
+- test/loading_overlay_test.dart: Future replacement and animation regressions.
+- test/overlay_behavior_test.dart: input, semantics, reduced motion, timing and layout.
+- test/interaction_regression_test.dart: active gesture cancellation, custom
+  accessibility, keyboard controls, and regional/global semantics isolation.
+- test/async_regression_test.dart and test/state_transitions_test.dart: build-time
+  notifications, reentrancy, stale owners, and mixed control-mode transitions.
+- test/timing_regression_test.dart: timing changes apply to the next cycle.
+- test/scope_test.dart: lifecycle, nesting and navigation guards.
+- example/test/widget_test.dart: exercised integration scenarios.
+- CONTRIBUTING.md: reproducible source checks and repository development commands.

@@ -1,7 +1,7 @@
 name: example
-description: A login form demonstrating loading_overlay.
+description: An interactive playground for loading_overlay with async tasks, progress, concurrency, errors, and app-wide loading.
 publish_to: none
-version: 1.0.0+1
+version: 0.7.0+1
 
 environment:
   sdk: ^3.14.0
