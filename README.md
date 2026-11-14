@@ -14,7 +14,8 @@ Add to your `pubspec.yaml`, then run `flutter pub get`:
 
 ```yaml
 dependencies:
-  loading_overlay: ^0.5.0
+  loading_overlay: ^0.6.0
+  material_ui: ^1.11.0
 ```
 
 ## Usage
@@ -23,6 +24,7 @@ Import the package:
 
 ```dart
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:material_ui/material_ui.dart';
 ```
 
 Wrap your content and rebuild when your `isSaving` boolean changes:
@@ -69,7 +71,12 @@ Both constructors accept these optional parameters:
 
 ## Compatibility
 
-Requires Flutter with Dart `>=2.12.0 <4.0.0`. No runtime dependencies beyond Flutter.
+Requires Flutter 3.50+ and Dart `^3.14.0`.
+
+**Upgrading from 0.5.x:** migrate your app's Material imports, themes, and
+localization delegates to `material_ui`. See the
+[Flutter migration guide](https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui).
+
 See [Contributing](CONTRIBUTING.md) for development requirements and checks.
 
 [Changelog](CHANGELOG.md) ·

@@ -1,4 +1,10 @@
-## [Unreleased]
+## [0.6.0]
+
+* **Breaking:** require Flutter 3.50+ and Dart `^3.14.0`.
+* **Breaking:** migrate Material widgets to `material_ui`. Add `material_ui` to
+  your app's dependencies and migrate Material imports, themes and localization
+  delegates together. See the [Flutter migration guide](https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui).
+  Apps on older Flutter versions can continue using 0.5.x.
 
 * Fix stale future completions hiding newer loading operations or overriding
   manually controlled visibility.
@@ -7,19 +13,18 @@
 * Handle future errors without creating unhandled errors on an ignored completion
   future, and ignore callbacks after disposal. The original future's result is
   preserved for callers.
-* Preserve the existing API, Dart SDK range, default colours and 300 ms fade.
+* Preserve both constructors, default colours and the 300 ms fade.
   Replace deprecated `withOpacity` usage with the equivalent constant colour.
 * Expand widget coverage for animation, interaction, customisation, future
   replacement, errors, disposal and switching visibility controls.
 * Update example lint tooling, remove unused Cupertino icons, refresh lockfiles,
   add login tests, prevent duplicate sign-ins and dispose the example's
   controllers safely.
-* Replace obsolete Travis CI with GitHub Actions, including a separate Dart 2.12
-  consumer check and web/Android example builds. Update the Android example to
+* Replace obsolete Travis CI with GitHub Actions using Flutter 3.50 for tests
+  and web/Android example builds. Update the Android example to
   AGP 9.3.1, Gradle 9.5 and built-in Kotlin with Java 17.
-* Correct the README's installation constraint and document future ownership,
-  compatibility and keyboard/accessibility interaction limitations. Defer the
-  Material package migration to a breaking release.
+* Simplify the README and document future ownership, migration requirements and
+  keyboard/accessibility interaction limitations.
 
 ## [0.5.0]
 * New: `LoadingOverlay.withFuture` constructor to display the overlay until a

@@ -13,7 +13,7 @@ flutter run -d chrome
 flutter test
 ```
 
-The example's Dart code and tests require Flutter 3.32 / Dart 3.8 or newer.
+The library and example require Flutter 3.50+ / Dart 3.14+ and use `material_ui`.
 
 The Android project targets Flutter 3.50 with AGP 9.3.1, Gradle 9.5 and JDK 17 or
 newer. It uses AGP's built-in Kotlin support. Build it with:
@@ -21,5 +21,3 @@ newer. It uses AGP's built-in Kotlin support. Build it with:
 ```sh
 flutter build apk --debug
 ```
-
-These example tooling requirements do not change the library's Dart SDK range.

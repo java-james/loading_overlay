@@ -1,25 +1,17 @@
 import 'dart:async';
 
-// Keep testing the SDK Material widgets supported by Flutter 2.x.
-// ignore: deprecated_member_use
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:material_ui/material_ui.dart';
 
 Widget manualOverlay(bool isLoading) => MaterialApp(
-      home: LoadingOverlay(
-        isLoading: isLoading,
-        child: const Text('child'),
-      ),
-    );
+  home: LoadingOverlay(isLoading: isLoading, child: const Text('child')),
+);
 
 Widget futureOverlay(Future<void> future) => MaterialApp(
-      home: LoadingOverlay.withFuture(
-        future: future,
-        child: const Text('child'),
-      ),
-    );
+  home: LoadingOverlay.withFuture(future: future, child: const Text('child')),
+);
 
 Future<void> finishFade(WidgetTester tester) async {
   // Process future callbacks, start the animation's first frame, then finish it.
@@ -32,11 +24,8 @@ Future<void> finishFade(WidgetTester tester) async {
 void main() {
   group('Modal Progress HUD', () {
     Widget sut(bool isLoading) => MaterialApp(
-          home: LoadingOverlay(
-            isLoading: isLoading,
-            child: const Text(''),
-          ),
-        );
+      home: LoadingOverlay(isLoading: isLoading, child: const Text('')),
+    );
 
     testWidgets('should show progress indicator when loading', (tester) async {
       const inAsyncCall = true;
@@ -46,8 +35,9 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('should not show progress indicator when not loading',
-        (tester) async {
+    testWidgets('should not show progress indicator when not loading', (
+      tester,
+    ) async {
       const inAsyncCall = false;
       await tester.pumpWidget(sut(inAsyncCall));
 
@@ -72,8 +62,9 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('hides progress indicator when future completes',
-        (tester) async {
+    testWidgets('hides progress indicator when future completes', (
+      tester,
+    ) async {
       final completer = Completer<void>();
       final widget = MaterialApp(
         home: LoadingOverlay.withFuture(
@@ -94,8 +85,9 @@ void main() {
     });
 
     for (final fail in [false, true]) {
-      testWidgets('ignores obsolete future ${fail ? 'errors' : 'completion'}',
-          (tester) async {
+      testWidgets('ignores obsolete future ${fail ? 'errors' : 'completion'}', (
+        tester,
+      ) async {
         final first = Completer<void>();
         final second = Completer<void>();
         await tester.pumpWidget(futureOverlay(first.future));
@@ -115,8 +107,9 @@ void main() {
         expect(find.byType(CircularProgressIndicator), findsNothing);
       });
 
-      testWidgets('ignores ${fail ? 'errors' : 'completion'} after disposal',
-          (tester) async {
+      testWidgets('ignores ${fail ? 'errors' : 'completion'} after disposal', (
+        tester,
+      ) async {
         final operation = Completer<void>();
         await tester.pumpWidget(futureOverlay(operation.future));
         await finishFade(tester);
@@ -131,17 +124,21 @@ void main() {
       });
     }
 
-    testWidgets('handles errors without changing the caller future',
-        (tester) async {
+    testWidgets('handles errors without changing the caller future', (
+      tester,
+    ) async {
       final operation = Completer<void>();
       final error = StateError('save failed');
       final stackTrace = StackTrace.current;
       Object? receivedError;
       StackTrace? receivedStackTrace;
-      operation.future.then<void>((_) {}, onError: (Object e, StackTrace s) {
-        receivedError = e;
-        receivedStackTrace = s;
-      });
+      operation.future.then<void>(
+        (_) {},
+        onError: (Object e, StackTrace s) {
+          receivedError = e;
+          receivedStackTrace = s;
+        },
+      );
       await tester.pumpWidget(futureOverlay(operation.future));
       await finishFade(tester);
       operation.completeError(error, stackTrace);
@@ -153,8 +150,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('hides on error without a separate error listener',
-        (tester) async {
+    testWidgets('hides on error without a separate error listener', (
+      tester,
+    ) async {
       final operation = Completer<void>();
       await tester.pumpWidget(futureOverlay(operation.future));
       await finishFade(tester);
@@ -164,8 +162,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('does not restart a completed future on rebuild',
-        (tester) async {
+    testWidgets('does not restart a completed future on rebuild', (
+      tester,
+    ) async {
       final operation = Completer<void>();
       await tester.pumpWidget(futureOverlay(operation.future));
       await finishFade(tester);
@@ -180,8 +179,9 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
-    testWidgets('shows for a new future after the previous future completed',
-        (tester) async {
+    testWidgets('shows for a new future after the previous future completed', (
+      tester,
+    ) async {
       final first = Completer<void>();
       final second = Completer<void>();
       await tester.pumpWidget(futureOverlay(first.future));
@@ -204,8 +204,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('handles synchronous completion when replacing a future',
-        (tester) async {
+    testWidgets('handles synchronous completion when replacing a future', (
+      tester,
+    ) async {
       final operation = Completer<void>();
       await tester.pumpWidget(futureOverlay(operation.future));
       await finishFade(tester);
@@ -220,8 +221,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('shows for a new future during the previous fade-out',
-        (tester) async {
+    testWidgets('shows for a new future during the previous fade-out', (
+      tester,
+    ) async {
       final first = Completer<void>();
       final second = Completer<void>();
       await tester.pumpWidget(futureOverlay(first.future));
@@ -232,11 +234,12 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 150));
       expect(
-          tester
-              .widget<FadeTransition>(find.byType(FadeTransition).last)
-              .opacity
-              .value,
-          closeTo(0.5, 0.01));
+        tester
+            .widget<FadeTransition>(find.byType(FadeTransition).last)
+            .opacity
+            .value,
+        closeTo(0.5, 0.01),
+      );
 
       await tester.pumpWidget(futureOverlay(second.future));
       await finishFade(tester);
@@ -247,8 +250,9 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
-    testWidgets('handles completion before the first fade finishes',
-        (tester) async {
+    testWidgets('handles completion before the first fade finishes', (
+      tester,
+    ) async {
       final operation = Completer<void>();
       await tester.pumpWidget(futureOverlay(operation.future));
       await tester.pump(const Duration(milliseconds: 150));
@@ -262,31 +266,37 @@ void main() {
     for (final isLoading in [false, true]) {
       for (final completed in [false, true]) {
         testWidgets(
-            'switches from ${completed ? 'completed' : 'pending'} future to isLoading=$isLoading',
-            (tester) async {
-          final operation = Completer<void>();
-          await tester.pumpWidget(futureOverlay(operation.future));
-          await finishFade(tester);
-          if (completed) {
-            operation.complete();
+          'switches from ${completed ? 'completed' : 'pending'} future to isLoading=$isLoading',
+          (tester) async {
+            final operation = Completer<void>();
+            await tester.pumpWidget(futureOverlay(operation.future));
             await finishFade(tester);
-          }
-          await tester.pumpWidget(manualOverlay(isLoading));
-          await finishFade(tester);
-          expect(find.byType(CircularProgressIndicator),
-              isLoading ? findsOneWidget : findsNothing);
+            if (completed) {
+              operation.complete();
+              await finishFade(tester);
+            }
+            await tester.pumpWidget(manualOverlay(isLoading));
+            await finishFade(tester);
+            expect(
+              find.byType(CircularProgressIndicator),
+              isLoading ? findsOneWidget : findsNothing,
+            );
 
-          if (!completed) {
-            operation.complete();
-            await finishFade(tester);
-            expect(find.byType(CircularProgressIndicator),
-                isLoading ? findsOneWidget : findsNothing);
-          }
-        });
+            if (!completed) {
+              operation.complete();
+              await finishFade(tester);
+              expect(
+                find.byType(CircularProgressIndicator),
+                isLoading ? findsOneWidget : findsNothing,
+              );
+            }
+          },
+        );
       }
 
-      testWidgets('switches from isLoading=$isLoading to a future',
-          (tester) async {
+      testWidgets('switches from isLoading=$isLoading to a future', (
+        tester,
+      ) async {
         final operation = Completer<void>();
         await tester.pumpWidget(manualOverlay(isLoading));
         await finishFade(tester);
@@ -324,53 +334,55 @@ void main() {
     });
 
     testWidgets(
-        'blocks child taps through fade-out and restores them afterwards',
-        (tester) async {
-      var taps = 0;
-      Widget app(bool loading) => MaterialApp(
-            home: LoadingOverlay(
-              isLoading: loading,
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: GestureDetector(
-                  onTap: () => taps++,
-                  child: const SizedBox(
-                    key: Key('tap-target'),
-                    width: 100,
-                    height: 100,
-                    child: ColoredBox(color: Colors.red),
-                  ),
+      'blocks child taps through fade-out and restores them afterwards',
+      (tester) async {
+        var taps = 0;
+        Widget app(bool loading) => MaterialApp(
+          home: LoadingOverlay(
+            isLoading: loading,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: GestureDetector(
+                onTap: () => taps++,
+                child: const SizedBox(
+                  key: Key('tap-target'),
+                  width: 100,
+                  height: 100,
+                  child: ColoredBox(color: Colors.red),
                 ),
               ),
             ),
-          );
-      await tester.pumpWidget(app(false));
-      final position = tester.getCenter(find.byKey(const Key('tap-target')));
-      await tester.tapAt(position);
-      expect(taps, 1);
-      await tester.pumpWidget(app(true));
-      await tester.tapAt(position);
-      expect(taps, 1);
-      await finishFade(tester);
-      await tester.tapAt(position);
-      expect(taps, 1);
-      await tester.pumpWidget(app(false));
-      await tester.pump(const Duration(milliseconds: 150));
-      await tester.tapAt(position);
-      expect(taps, 1);
-      await tester.pump(const Duration(milliseconds: 151));
-      await tester.tapAt(position);
-      expect(taps, 2);
-    });
+          ),
+        );
+        await tester.pumpWidget(app(false));
+        final position = tester.getCenter(find.byKey(const Key('tap-target')));
+        await tester.tapAt(position);
+        expect(taps, 1);
+        await tester.pumpWidget(app(true));
+        await tester.tapAt(position);
+        expect(taps, 1);
+        await finishFade(tester);
+        await tester.tapAt(position);
+        expect(taps, 1);
+        await tester.pumpWidget(app(false));
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.tapAt(position);
+        expect(taps, 1);
+        await tester.pump(const Duration(milliseconds: 151));
+        await tester.tapAt(position);
+        expect(taps, 2);
+      },
+    );
 
-    testWidgets('preserves child state across rapid loading changes',
-        (tester) async {
+    testWidgets('preserves child state across rapid loading changes', (
+      tester,
+    ) async {
       Widget app(bool loading) => MaterialApp(
-            home: LoadingOverlay(
-              isLoading: loading,
-              child: Form(child: const Text('form')),
-            ),
-          );
+        home: LoadingOverlay(
+          isLoading: loading,
+          child: Form(child: const Text('form')),
+        ),
+      );
       await tester.pumpWidget(app(false));
       final childState = tester.state<FormState>(find.byType(Form));
       await tester.pumpWidget(app(true));
@@ -389,45 +401,84 @@ void main() {
     });
 
     for (final useFuture in [false, true]) {
-      testWidgets('honours custom colour and indicator (future=$useFuture)',
-          (tester) async {
+      testWidgets('honours custom colour and indicator (future=$useFuture)', (
+        tester,
+      ) async {
         const indicator = Text('custom progress');
         const color = Color(0x40800000);
         final operation = Completer<void>();
-        await tester.pumpWidget(MaterialApp(
-          home: useFuture
-              ? LoadingOverlay.withFuture(
-                  future: operation.future,
-                  color: color,
-                  progressIndicator: indicator,
-                  child: const Text('child'),
-                )
-              : const LoadingOverlay(
-                  isLoading: true,
-                  color: color,
-                  progressIndicator: indicator,
-                  child: Text('child'),
-                ),
-        ));
+        await tester.pumpWidget(
+          MaterialApp(
+            home: useFuture
+                ? LoadingOverlay.withFuture(
+                    future: operation.future,
+                    color: color,
+                    progressIndicator: indicator,
+                    child: const Text('child'),
+                  )
+                : const LoadingOverlay(
+                    isLoading: true,
+                    color: color,
+                    progressIndicator: indicator,
+                    child: Text('child'),
+                  ),
+          ),
+        );
         expect(find.text('custom progress'), findsOneWidget);
         expect(find.byType(CircularProgressIndicator), findsNothing);
         expect(
-            find.byWidgetPredicate(
-                (widget) => widget is ColoredBox && widget.color == color),
-            findsOneWidget);
+          find.byWidgetPredicate(
+            (widget) => widget is ColoredBox && widget.color == color,
+          ),
+          findsOneWidget,
+        );
       });
     }
 
-    testWidgets('preserves the default backdrop and white indicator',
-        (tester) async {
+    testWidgets('preserves the default backdrop and white indicator', (
+      tester,
+    ) async {
       await tester.pumpWidget(manualOverlay(true));
       expect(
-          find.byWidgetPredicate((widget) =>
-              widget is ColoredBox && widget.color == const Color(0x80000000)),
-          findsOneWidget);
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is ColoredBox && widget.color == const Color(0x80000000),
+        ),
+        findsOneWidget,
+      );
       final indicator = tester.widget<CircularProgressIndicator>(
-          find.byType(CircularProgressIndicator));
+        find.byType(CircularProgressIndicator),
+      );
       expect(indicator.valueColor!.value, Colors.white);
     });
+
+    for (final brightness in [Brightness.light, Brightness.dark]) {
+      testWidgets('inherits the ${brightness.name} Material indicator theme', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(
+              brightness: brightness,
+              progressIndicatorTheme: const ProgressIndicatorThemeData(
+                color: Colors.red,
+                strokeWidth: 7,
+                constraints: BoxConstraints.tightFor(width: 48, height: 48),
+              ),
+            ),
+            home: const LoadingOverlay(isLoading: true, child: Text('child')),
+          ),
+        );
+
+        final indicator = find.byType(CircularProgressIndicator);
+        expect(tester.getSize(indicator), const Size(48, 48));
+        expect(Theme.of(tester.element(indicator)).brightness, brightness);
+        expect(
+          tester.widget<CircularProgressIndicator>(indicator).valueColor!.value,
+          Colors.white,
+        );
+        expect(indicator, paints..arc(color: Colors.white, strokeWidth: 7));
+      });
+    }
   });
 }

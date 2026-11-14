@@ -1,8 +1,7 @@
-// Keep this example compatible with the library's SDK Material widgets.
-// ignore: deprecated_member_use
-import 'package:flutter/material.dart';
-import 'package:loading_overlay/loading_overlay.dart';
 import 'dart:async';
+
+import 'package:loading_overlay/loading_overlay.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() => runApp(const MyApp());
 

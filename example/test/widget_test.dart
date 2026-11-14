@@ -1,9 +1,7 @@
-// Keep this example compatible with the library's SDK Material widgets.
-// ignore: deprecated_member_use
-import 'package:flutter/material.dart';
+import 'package:example/main.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:example/main.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   testWidgets('login blocks duplicate taps and restores the form', (
