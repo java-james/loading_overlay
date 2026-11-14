@@ -1,98 +1,85 @@
 # loading_overlay
 
-A simple widget wrapper to enable modal progress HUD (a modal progress indicator, HUD = Heads Up Display).
+A Flutter loading overlay with a dimmed backdrop and a 300 ms fade.
+Control it with a boolean or let it follow a `Future`.
 
-Started as a fork of [modal_progress_hud](https://pub.dev/packages/modal_progress_hud)
-Inspired by [this](https://codingwithjoe.com/flutter-how-to-build-a-modal-progress-indicator/) article.
+[pub.dev](https://pub.dev/packages/loading_overlay) ·
+[API reference](https://pub.dev/documentation/loading_overlay/latest/)
 
+![Loading overlay on a login form](https://raw.githubusercontent.com/java-james/loading_overlay/master/loading_overlay.gif)
 
-## Demo
+## Install
 
-![Demo](https://raw.githubusercontent.com/java-james/loading_overlay/master/loading_overlay.gif)
+Add to your `pubspec.yaml`, then run `flutter pub get`:
 
-*See example for details*
-
+```yaml
+dependencies:
+  loading_overlay: ^0.6.0
+```
 
 ## Usage
 
-Add the package to your `pubspec.yml` file.
-
-```yml
-dependencies:
-  loading_overlay: ^0.4.0
-```
-
-Next, import the library into your widget.
+Import the package:
 
 ```dart
+import 'package:flutter/widgets.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 ```
 
-Now, all you have to do is simply wrap your widget as a child of `LoadingOverlay`, typically a form, together with a boolean that is maintained in local state.
+Wrap your content and rebuild when your `isSaving` boolean changes:
 
 ```dart
-...
-bool _isSaving_ = false
-...
-
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-     body: LoadingOverlay(
-      color: Colors.black.withOpacity(0.5),
-      child: Container(
-       Form(...)
-      ),
-      isLoading: _isSaving_
-      ),
-  );
-}
-```
-
-Alternatively, show the overlay until a Future completes (non-breaking new feature):
-
-```dart
-// Start an async operation
-final saveFuture = _saveFormAsync();
-
-return LoadingOverlay.withFuture(
-  future: saveFuture,
-  color: Colors.black.withOpacity(0.5),
-  child: Form(...),
+return LoadingOverlay(
+  isLoading: isSaving,
+  child: const Center(child: Text('Your content')),
 );
 ```
 
+### Follow a future
 
-## Options
+Create and retain `saveFuture` (`Future<void>`) before `build`, for example in
+`initState` or an event handler:
 
-The current parameters are customizable in the constructor
 ```dart
-LoadingOverlay({
-  required bool isLoading,
-  required Widget child,
-  Widget progressIndicator = const CircularProgressIndicator(),
-  Color? color,
-});
-
-// New: show overlay until a Future completes
-LoadingOverlay.withFuture({
-  required Future<void> future,
-  required Widget child,
-  Widget progressIndicator = const CircularProgressIndicator(),
-  Color? color,
-});
+return LoadingOverlay.withFuture(
+  future: saveFuture,
+  child: const Center(child: Text('Your content')),
+);
 ```
 
-Update: See this [article](https://medium.com/@nocnoc/the-secret-to-async-validation-on-flutter-forms-4b273c667c03) on Medium about async form validation
+Success and failure both dismiss the overlay. Handle errors on the original
+future. Only the latest future controls visibility; rebuilding with the same
+completed future keeps the overlay hidden.
 
-See the [example application](https://github.com/java-james/loading_overlay/tree/master/example) source
-for a complete sample app using the modal progress HUD. Included in the
-example is a method for using a form's validators while making async
-calls (see [flutter/issues/9688](https://github.com/flutter/flutter/issues/9688) for details).
+### Interaction
 
+The overlay blocks pointer taps, including during fade-out. Keyboard and
+accessibility actions remain available, so guard async handlers against duplicate
+submissions. The [login example](example/lib/main.dart) shows how.
 
-### Issues and feedback
+## Customize
 
-Please file [issues](https://github.com/java-james/loading_overlay/issues/new)
-to send feedback or report a bug. Thank you!
+Both constructors accept these optional parameters:
+
+| Parameter | Default |
+| --- | --- |
+| `color` | Translucent black: `const Color(0x80000000)` |
+| `progressIndicator` | White `CircularProgressIndicator` |
+
+## Compatibility
+
+Requires Flutter 3.50+ and Dart `^3.14.0`.
+
+**Upgrading from 0.5.x:** the default spinner now uses `material_ui` and no longer
+reads themes from `package:flutter/material.dart`. To retain legacy spinner
+styling, pass your own `progressIndicator` or
+[migrate your Material theme](https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui).
+
+See [Contributing](CONTRIBUTING.md) for development requirements and checks.
+
+[Changelog](CHANGELOG.md) ·
+[Report an issue](https://github.com/java-james/loading_overlay/issues)
+
+[MIT licensed](LICENSE). Forked from
+[modal_progress_hud](https://pub.dev/packages/modal_progress_hud).
 

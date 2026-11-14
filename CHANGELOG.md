@@ -1,4 +1,33 @@
-## [Unreleased]
+## [0.6.0]
+
+* **Breaking:** require Flutter 3.50+ and Dart `^3.14.0`.
+  Apps on older Flutter versions can continue using 0.5.x.
+* **Breaking:** the default spinner now uses `material_ui` and no longer reads
+  themes from `package:flutter/material.dart`. To retain legacy spinner styling,
+  pass your own `progressIndicator` or
+  [migrate your Material theme](https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui).
+  `material_ui` is installed transitively; apps only need to declare it directly
+  if they import it.
+
+* Fix stale future completions hiding newer loading operations or overriding
+  manually controlled visibility.
+* Fix switching from future-controlled loading to `isLoading: true` after the
+  future has completed.
+* Handle future errors without creating unhandled errors on an ignored completion
+  future, and ignore callbacks after disposal. The original future's result is
+  preserved for callers.
+* Preserve both constructors, default colours and the 300 ms fade.
+  Replace deprecated `withOpacity` usage with the equivalent constant colour.
+* Expand widget coverage for animation, interaction, customisation, future
+  replacement, errors, disposal and switching visibility controls.
+* Update example lint tooling, remove unused Cupertino icons, refresh lockfiles,
+  add login tests, prevent duplicate sign-ins and dispose the example's
+  controllers safely.
+* Replace obsolete Travis CI with GitHub Actions using Flutter 3.50 for tests
+  and web/Android example builds. Update the Android example to
+  AGP 9.3.1, Gradle 9.5 and built-in Kotlin with Java 17.
+* Simplify the README and document future ownership, migration requirements and
+  keyboard/accessibility interaction limitations.
 
 ## [0.5.0]
 * New: `LoadingOverlay.withFuture` constructor to display the overlay until a

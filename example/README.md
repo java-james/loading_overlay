@@ -1,16 +1,23 @@
-# example
+# loading_overlay example
 
-A new Flutter project.
+This login form shows how to keep the form visible while blocking pointer taps
+and preventing duplicate sign-ins during an asynchronous operation. It also
+demonstrates safely disposing the form's controllers and leaving the page while
+a request is pending.
 
-## Getting Started
+Run from this directory:
 
-This project is a starting point for a Flutter application.
+```sh
+flutter pub get
+flutter run -d chrome
+flutter test
+```
 
-A few resources to get you started if this is your first Flutter project:
+The library and example require Flutter 3.50+ / Dart 3.14+ and use `material_ui`.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+The Android project targets Flutter 3.50 with AGP 9.3.1, Gradle 9.5 and JDK 17 or
+newer. It uses AGP's built-in Kotlin support. Build it with:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```sh
+flutter build apk --debug
+```

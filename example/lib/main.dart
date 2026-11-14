@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:loading_overlay/loading_overlay.dart';
 import 'dart:async';
+
+import 'package:loading_overlay/loading_overlay.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() => runApp(const MyApp());
 
@@ -15,9 +16,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginPage(
-        onSignIn: () => print('login successful!'),
-      ),
+      home: LoginPage(onSignIn: () => debugPrint('login successful!')),
     );
   }
 }
@@ -37,17 +36,29 @@ class LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   Future<void> signIn() async {
+    // Also guard keyboard activation and taps before the next frame is drawn.
+    if (_isLoading) return;
+
     setState(() {
       _isLoading = true;
     });
 
     await Future.delayed(const Duration(seconds: 2));
 
+    if (!mounted) return;
     widget.onSignIn();
 
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
     });
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -55,7 +66,7 @@ class LoginPageState extends State<LoginPage> {
     return Scaffold(
       // Optionally can use [LoadingOverlay.withFuture] and pass in the Future from signIn too!
       body: LoadingOverlay(
-        color: Colors.black.withOpacity(0.5),
+        color: const Color(0x80000000),
         isLoading: _isLoading,
         child: SafeArea(
           child: Column(
@@ -69,10 +80,7 @@ class LoginPageState extends State<LoginPage> {
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
               ),
-              ElevatedButton(
-                onPressed: signIn,
-                child: const Text('Login'),
-              ),
+              ElevatedButton(onPressed: signIn, child: const Text('Login')),
             ],
           ),
         ),
